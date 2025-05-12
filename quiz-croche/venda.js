@@ -1,0 +1,171 @@
+document.addEventListener('DOMContentLoaded', function() {
+  // Navegação dos depoimentos
+  const depoimentos = document.querySelectorAll('.depoimento-destaque');
+  const indicadores = document.querySelectorAll('.depoimento-indicador');
+  
+  if (depoimentos.length > 0 && indicadores.length > 0) {
+    // Define o primeiro depoimento como ativo inicialmente
+    depoimentos[0].classList.add('active');
+    
+    indicadores.forEach((indicador, index) => {
+      indicador.addEventListener('click', () => {
+        // Esconde todos os depoimentos e remove classe active
+        depoimentos.forEach(depoimento => {
+          depoimento.style.display = 'none';
+          depoimento.classList.remove('active');
+        });
+        
+        // Remove classe ativo de todos os indicadores
+        indicadores.forEach(ind => {
+          ind.classList.remove('ativo');
+        });
+        
+        // Mostra o depoimento selecionado
+        depoimentos[index].style.display = 'block';
+        
+        // Adiciona classe active para animar o depoimento
+        setTimeout(() => {
+          depoimentos[index].classList.add('active');
+        }, 10);
+        
+        // Adiciona classe ativo ao indicador clicado
+        indicador.classList.add('ativo');
+      });
+    });
+    
+    // Navegação automática a cada 5 segundos
+    let currentIndex = 0;
+    let autoRotate = setInterval(() => {
+      currentIndex = (currentIndex + 1) % depoimentos.length;
+      indicadores[currentIndex].click();
+    }, 5000);
+    
+    // Pausa a rotação automática quando o mouse está sobre o depoimento
+    const depoimentosContainer = document.querySelector('.depoimentos-container');
+    depoimentosContainer.addEventListener('mouseenter', () => {
+      clearInterval(autoRotate);
+    });
+    
+    // Reinicia a rotação automática quando o mouse sai do depoimento
+    depoimentosContainer.addEventListener('mouseleave', () => {
+      autoRotate = setInterval(() => {
+        currentIndex = (currentIndex + 1) % depoimentos.length;
+        indicadores[currentIndex].click();
+      }, 5000);
+    });
+  }
+  
+  // Funcionalidade para todas as imagens de bolsas
+  const bolsaLinks = document.querySelectorAll('.bolsa-link');
+  
+  bolsaLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Cria um modal para mostrar a imagem ampliada
+      const modal = document.createElement('div');
+      modal.classList.add('bolsa-modal');
+      
+      const modalContent = document.createElement('div');
+      modalContent.classList.add('bolsa-modal-content');
+      
+      const imgSrc = this.querySelector('img').src;
+      const imgAlt = this.querySelector('img').alt;
+      
+      const modalImg = document.createElement('img');
+      modalImg.src = imgSrc;
+      modalImg.alt = imgAlt;
+      
+      const closeBtn = document.createElement('span');
+      closeBtn.classList.add('bolsa-modal-close');
+      closeBtn.innerHTML = '&times;';
+      
+      const modalTitle = document.createElement('h3');
+      
+      // Determinar o título com base no alt da imagem
+      if (imgAlt.includes('verde')) {
+        modalTitle.textContent = 'Bolsa de Crochê Verde';
+      } else if (imgAlt.includes('rosa')) {
+        modalTitle.textContent = 'Bolsa de Crochê Rosa';
+      } else if (imgAlt.includes('terracota')) {
+        modalTitle.textContent = 'Bolsa de Crochê Terracota';
+      } else if (imgAlt.includes('branca')) {
+        modalTitle.textContent = 'Bolsa de Crochê Branca';
+      } else {
+        modalTitle.textContent = 'Bolsa de Crochê';
+      }
+      
+      const modalDesc = document.createElement('p');
+      
+      // Personalizar descrição com base no alt da imagem
+      if (imgAlt.includes('terracota')) {
+        modalDesc.textContent = 'Esta bolsa terracota com alça de corrente dourada e pingentes é um dos modelos mais vendidos pelas nossas alunas. Elegante e versátil, combina com diversos looks.';
+      } else if (imgAlt.includes('branca')) {
+        modalDesc.textContent = 'A bolsa branca com corrente dourada é perfeita para ocasiões especiais. Seu design moderno e sofisticado é um dos favoritos entre nossas alunas iniciantes.';
+      } else {
+        modalDesc.textContent = 'Esta bolsa foi feita por uma de nossas alunas utilizando a técnica ensinada no curso. Você também pode aprender a fazer!';
+      }
+      
+      const ctaBtn = document.createElement('a');
+      ctaBtn.href = '#';
+      ctaBtn.classList.add('cta-btn', 'modal-cta');
+      ctaBtn.textContent = 'QUERO APRENDER A FAZER';
+      
+      modalContent.appendChild(closeBtn);
+      modalContent.appendChild(modalImg);
+      modalContent.appendChild(modalTitle);
+      modalContent.appendChild(modalDesc);
+      modalContent.appendChild(ctaBtn);
+      modal.appendChild(modalContent);
+      
+      document.body.appendChild(modal);
+      
+      // Exibe o modal com animação
+      setTimeout(() => {
+        modal.classList.add('active');
+      }, 10);
+      
+      // Fecha o modal ao clicar no botão de fechar
+      closeBtn.addEventListener('click', () => {
+        modal.classList.remove('active');
+        setTimeout(() => {
+          document.body.removeChild(modal);
+        }, 300);
+      });
+      
+      // Fecha o modal ao clicar fora do conteúdo
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+          setTimeout(() => {
+            document.body.removeChild(modal);
+          }, 300);
+        }
+      });
+    });
+  });
+  
+  // Funcionalidade de acordeão para o FAQ
+  const faqItems = document.querySelectorAll('.faq-item');
+  
+  faqItems.forEach(item => {
+    const pergunta = item.querySelector('.faq-pergunta');
+    
+    pergunta.addEventListener('click', () => {
+      // Fecha todos os outros itens
+      faqItems.forEach(otherItem => {
+        if (otherItem !== item && otherItem.classList.contains('active')) {
+          otherItem.classList.remove('active');
+        }
+      });
+      
+      // Alterna o estado do item atual
+      item.classList.toggle('active');
+    });
+  });
+  
+  // Ativa o primeiro item do FAQ por padrão
+  if (faqItems.length > 0) {
+    faqItems[0].classList.add('active');
+  }
+});
