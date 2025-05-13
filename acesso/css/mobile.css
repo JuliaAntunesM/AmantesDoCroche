@@ -1,0 +1,197 @@
+/* Estilos para dispositivos móveis */
+@media (max-width: 992px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    /* Header Mobile */
+    header {
+        padding: 10px 0;
+    }
+
+    .mobile-menu-toggle {
+        display: block;
+    }
+
+    .menu {
+        position: fixed;
+        top: 80px;
+        left: -100%;
+        width: 80%;
+        max-width: 320px;
+        height: calc(100vh - 80px);
+        flex-direction: column;
+        background-color: var(--background-color);
+        box-shadow: 2px 0 10px var(--shadow-color);
+        padding: 20px;
+        transition: left 0.3s ease;
+        overflow-y: auto;
+        z-index: 90;
+    }
+
+    .menu.active {
+        left: 0;
+    }
+
+    .menu li {
+        margin: 0 0 15px 0;
+        width: 100%;
+    }
+
+    .menu a {
+        padding: 12px 15px;
+        width: 100%;
+    }
+
+    .submenu {
+        position: static;
+        visibility: visible;
+        opacity: 1;
+        transform: none;
+        box-shadow: none;
+        width: 100%;
+        margin-top: 10px;
+        display: none;
+    }
+
+    .profile-menu:hover .submenu {
+        display: block;
+    }
+
+    /* Hero Mobile */
+    .hero {
+        padding: 60px 0 100px;
+    }
+
+    .hero .container {
+        flex-direction: column;
+    }
+
+    .hero-content {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .hero h2 {
+        font-size: 2.2rem;
+    }
+
+    .hero-buttons {
+        justify-content: center;
+    }
+
+    .hero-image {
+        max-width: 100%;
+    }
+
+    /* Progress Mobile */
+    .progress-stats {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .stat {
+        justify-content: center;
+    }
+
+    /* Módulos Mobile */
+    .modulo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Testimonial Mobile */
+    .testimonial-card {
+        flex-direction: column;
+    }
+
+    .testimonial-image {
+        flex: none;
+        height: 200px;
+    }
+
+    /* Bonus Mobile */
+    .bonus-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* FAQ Mobile */
+    .faq-question h3 {
+        font-size: 1.1rem;
+        padding-right: 30px;
+    }
+
+    /* Support Mobile */
+    .suporte-content {
+        flex-direction: column;
+    }
+
+    .suporte-info, .suporte-form {
+        max-width: 100%;
+    }
+
+    /* Footer Mobile */
+    .footer-content {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .footer-logo, .footer-links, .footer-social {
+        max-width: 100%;
+        text-align: center;
+    }
+
+    .footer-logo {
+        justify-content: center;
+    }
+
+    .social-icons {
+        justify-content: center;
+    }
+}
+
+/* Estilos para dispositivos pequenos (smartphones) */
+@media (max-width: 576px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+    }
+
+    h3 {
+        font-size: 1.3rem;
+    }
+
+    .hero h2 {
+        font-size: 1.8rem;
+    }
+
+    .hero h3 {
+        font-size: 1.4rem;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .logo-img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .logo-text h1 {
+        font-size: 1.5rem;
+    }
+
+    .hero-badge {
+        width: 70px;
+        height: 70px;
+        font-size: 0.8rem;
+    }
+} 
