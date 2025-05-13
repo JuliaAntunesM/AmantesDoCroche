@@ -658,7 +658,7 @@ function renderQuiz() {
     if (q.intro) {
       quizContent.innerHTML += `
         <div class="quiz-intro">
-          <div class="quiz-intro-title"><span class="emoji">💡</span>QUIZ – Será que você nasceu pra lucrar com crochê?</div>
+          <div class="quiz-intro-title"><span class="emoji">💡</span>Será que você nasceu pra lucrar com crochê?</div>
           <p class="quiz-intro-desc">Responda agora e descubra se o crochê pode ser seu caminho pra ter paz, propósito e renda em casa <span class="emoji">🧶</span><span class="emoji">💰</span></p>
         </div>
       `;
