@@ -88,6 +88,368 @@ let answers = [];
 let userName = '';
 let totalPoints = 0;
 let bonusStreak = 0;
+let soundEnabled = true;
+let audioUnlocked = false;
+
+// Sistema de áudio usando Web Audio API (sem depender de arquivos externos)
+const audioSystem = {
+  audioContext: null,
+  init: function() {
+    try {
+      // Cria o contexto de áudio
+      window.AudioContext = window.AudioContext || window.webkitAudioContext;
+      this.audioContext = new AudioContext();
+      audioUnlocked = true;
+      
+      // Tenta desbloquear o áudio em dispositivos móveis
+      this.unlockAudio();
+      
+      console.log('Sistema de áudio inicializado com sucesso');
+    } catch (e) {
+      console.log('Erro ao inicializar sistema de áudio:', e);
+    }
+  },
+  unlockAudio: function() {
+    // Função para desbloquear áudio em iOS e outros dispositivos móveis
+    const unlockAudio = () => {
+      if (!this.audioContext) return;
+      
+      // Cria um oscilador silencioso
+      const oscillator = this.audioContext.createOscillator();
+      const gainNode = this.audioContext.createGain();
+      gainNode.gain.value = 0;
+      oscillator.connect(gainNode);
+      gainNode.connect(this.audioContext.destination);
+      oscillator.start(0);
+      oscillator.stop(0.001);
+      
+      // Resume o contexto de áudio se estiver suspenso
+      if (this.audioContext.state === 'suspended') {
+        this.audioContext.resume();
+      }
+      
+      audioUnlocked = true;
+      
+      // Remover os event listeners após o desbloqueio
+      document.removeEventListener('touchstart', unlockAudio);
+      document.removeEventListener('touchend', unlockAudio);
+      document.removeEventListener('click', unlockAudio);
+    };
+    
+    document.addEventListener('touchstart', unlockAudio);
+    document.addEventListener('touchend', unlockAudio);
+    document.addEventListener('click', unlockAudio);
+  },
+  // Som de moeda caindo
+  playCoinSound: function(points) {
+    if (!soundEnabled || !this.audioContext) return;
+    
+    try {
+      const ctx = this.audioContext;
+      const now = ctx.currentTime;
+      
+      // Cria um oscilador para o som metálico
+      const osc1 = ctx.createOscillator();
+      osc1.type = 'triangle';
+      
+      // Cria um oscilador para o som de impacto
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'sine';
+      
+      // Cria um filtro para dar o efeito metálico
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 2500;
+      filter.Q.value = 5;
+      
+      // Cria nós de ganho para controlar o volume
+      const gainOsc1 = ctx.createGain();
+      const gainOsc2 = ctx.createGain();
+      const masterGain = ctx.createGain();
+      
+      // Conecta os osciladores aos seus nós de ganho
+      osc1.connect(gainOsc1);
+      osc2.connect(gainOsc2);
+      
+      // Conecta os nós de ganho ao filtro
+      gainOsc1.connect(filter);
+      gainOsc2.connect(filter);
+      
+      // Conecta o filtro ao ganho master e à saída
+      filter.connect(masterGain);
+      masterGain.connect(ctx.destination);
+      
+      // Define as frequências iniciais
+      osc1.frequency.value = 2500;
+      osc2.frequency.value = 1500;
+      
+      // Configura o envelope de volume para o som metálico
+      gainOsc1.gain.setValueAtTime(0, now);
+      gainOsc1.gain.linearRampToValueAtTime(0.2, now + 0.01);
+      gainOsc1.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+      
+      // Configura o envelope de volume para o som de impacto
+      gainOsc2.gain.setValueAtTime(0, now);
+      gainOsc2.gain.linearRampToValueAtTime(0.2, now + 0.01);
+      gainOsc2.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+      
+      // Define o volume master com base na quantidade de pontos
+      const volume = points >= 30 ? 0.4 : (points >= 20 ? 0.3 : 0.2);
+      masterGain.gain.value = volume;
+      
+      // Inicia os osciladores
+      osc1.start(now);
+      osc2.start(now);
+      
+      // Para os osciladores
+      osc1.stop(now + 0.3);
+      osc2.stop(now + 0.3);
+      
+      // Para pontuações maiores, adiciona mais moedas
+      if (points >= 20) {
+        setTimeout(() => {
+          this.playSingleCoinSound(0.25);
+        }, 150);
+      }
+      
+      if (points >= 30) {
+        setTimeout(() => {
+          this.playSingleCoinSound(0.3);
+        }, 300);
+      }
+    } catch (e) {
+      console.log('Erro ao reproduzir som de moeda:', e);
+    }
+  },
+  // Som de uma única moeda
+  playSingleCoinSound: function(volume = 0.2) {
+    if (!soundEnabled || !this.audioContext) return;
+    
+    try {
+      const ctx = this.audioContext;
+      const now = ctx.currentTime;
+      
+      // Oscilador para o som metálico
+      const osc = ctx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.value = 2000 + Math.random() * 500;
+      
+      // Filtro para dar o efeito metálico
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 2000;
+      filter.Q.value = 3;
+      
+      // Nó de ganho para controlar o volume
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(volume, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      
+      // Conecta tudo
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      
+      // Inicia e para o oscilador
+      osc.start(now);
+      osc.stop(now + 0.2);
+    } catch (e) {
+      console.log('Erro ao reproduzir som de moeda única:', e);
+    }
+  },
+  // Som de clique de botão
+  playClickSound: function() {
+    if (!soundEnabled || !this.audioContext) return;
+    
+    try {
+      const ctx = this.audioContext;
+      const now = ctx.currentTime;
+      
+      // Cria um oscilador para o clique
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = 800;
+      
+      // Cria um nó de ganho para controlar o volume
+      const gain = ctx.createGain();
+      
+      // Conecta o oscilador ao nó de ganho e à saída
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      // Configura o envelope de volume para um clique curto
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.1, now + 0.005);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+      
+      // Inicia e para o oscilador
+      osc.start(now);
+      osc.stop(now + 0.05);
+    } catch (e) {
+      console.log('Erro ao reproduzir som de clique:', e);
+    }
+  },
+  // Som de bônus (chuva de moedas)
+  playBonusSound: function(isSpecial = false) {
+    if (!soundEnabled || !this.audioContext) return;
+    
+    try {
+      // Reproduz várias moedas em sequência para simular uma chuva de moedas
+      const numCoins = isSpecial ? 8 : 4;
+      const baseVolume = isSpecial ? 0.3 : 0.2;
+      
+      for (let i = 0; i < numCoins; i++) {
+        setTimeout(() => {
+          // Varia um pouco o volume e a frequência para cada moeda
+          const randomVolume = baseVolume + Math.random() * 0.1;
+          this.playSingleCoinSound(randomVolume);
+        }, i * (isSpecial ? 80 : 120));
+      }
+      
+      // Adiciona um som de "jackpot" para bônus especiais
+      if (isSpecial) {
+        setTimeout(() => {
+          const ctx = this.audioContext;
+          const now = ctx.currentTime;
+          
+          // Cria um oscilador para o som de "jackpot"
+          const osc = ctx.createOscillator();
+          osc.type = 'sine';
+          
+          // Cria um nó de ganho para controlar o volume
+          const gain = ctx.createGain();
+          
+          // Conecta o oscilador ao nó de ganho e à saída
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          
+          // Configura o envelope de volume
+          gain.gain.setValueAtTime(0, now);
+          gain.gain.linearRampToValueAtTime(0.3, now + 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+          
+          // Faz a frequência subir para dar sensação de vitória
+          osc.frequency.setValueAtTime(500, now);
+          osc.frequency.linearRampToValueAtTime(1500, now + 0.3);
+          
+          // Inicia e para o oscilador
+          osc.start(now);
+          osc.stop(now + 0.5);
+        }, numCoins * 80 + 100);
+      }
+    } catch (e) {
+      console.log('Erro ao reproduzir som de bônus:', e);
+    }
+  },
+  // Som final (chuva de moedas grande)
+  playFinalSound: function() {
+    if (!soundEnabled || !this.audioContext) return;
+    
+    try {
+      // Primeiro toca um acorde de vitória
+      const ctx = this.audioContext;
+      const now = ctx.currentTime;
+      
+      // Cria osciladores para o acorde
+      const notes = [500, 600, 750, 900];
+      notes.forEach((freq, i) => {
+        setTimeout(() => {
+          const osc = ctx.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          
+          const gain = ctx.createGain();
+          gain.gain.setValueAtTime(0, now + i * 0.1);
+          gain.gain.linearRampToValueAtTime(0.2, now + i * 0.1 + 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.8);
+          
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          
+          osc.start(now + i * 0.1);
+          osc.stop(now + i * 0.1 + 0.8);
+        }, i * 100);
+      });
+      
+      // Depois toca uma grande chuva de moedas
+      setTimeout(() => {
+        // Reproduz muitas moedas em sequência para simular uma chuva de moedas grande
+        const numCoins = 15;
+        
+        for (let i = 0; i < numCoins; i++) {
+          setTimeout(() => {
+            // Varia o volume e a frequência para cada moeda
+            const randomVolume = 0.15 + Math.random() * 0.2;
+            this.playSingleCoinSound(randomVolume);
+          }, i * 100 + Math.random() * 200);
+        }
+      }, 500);
+    } catch (e) {
+      console.log('Erro ao reproduzir som final:', e);
+    }
+  },
+  // Toca um som para teste
+  playTestSound: function() {
+    if (!soundEnabled || !this.audioContext) return;
+    
+    try {
+      // Toca uma sequência de moedas para demonstração
+      this.playSingleCoinSound(0.3);
+      
+      setTimeout(() => {
+        this.playSingleCoinSound(0.25);
+      }, 150);
+      
+      setTimeout(() => {
+        this.playSingleCoinSound(0.2);
+      }, 300);
+    } catch (e) {
+      console.log('Erro ao reproduzir som de teste:', e);
+    }
+  },
+  showAudioWarning: function() {
+    if (document.querySelector('.audio-warning')) return;
+    
+    const warning = document.createElement('div');
+    warning.className = 'audio-warning';
+    warning.innerHTML = `
+      <div class="audio-warning-content">
+        <span class="audio-warning-icon">🔊</span>
+        <span class="audio-warning-text">Clique aqui para ativar os sons</span>
+      </div>
+    `;
+    warning.onclick = () => {
+      if (this.audioContext && this.audioContext.state === 'suspended') {
+        this.audioContext.resume().then(() => {
+          audioUnlocked = true;
+          this.playTestSound();
+          warning.classList.add('audio-warning-success');
+          warning.querySelector('.audio-warning-text').textContent = 'Sons ativados com sucesso!';
+          
+          setTimeout(() => {
+            warning.remove();
+          }, 2000);
+        }).catch(e => {
+          warning.querySelector('.audio-warning-text').textContent = 'Tente clicar novamente para ativar os sons';
+        });
+      } else {
+        this.playTestSound();
+        warning.classList.add('audio-warning-success');
+        warning.querySelector('.audio-warning-text').textContent = 'Sons ativados com sucesso!';
+        
+        setTimeout(() => {
+          warning.remove();
+        }, 2000);
+      }
+    };
+    
+    document.body.appendChild(warning);
+  }
+};
+
+// Inicializa o sistema de áudio
+audioSystem.init();
 
 const quizContent = document.getElementById('quiz-content');
 
@@ -101,10 +463,38 @@ function createCoinCounter() {
   return coinCounter;
 }
 
+function createSoundToggle() {
+  const soundToggle = document.createElement('div');
+  soundToggle.className = 'sound-toggle';
+  soundToggle.innerHTML = soundEnabled ? '🔊' : '🔇';
+  soundToggle.title = soundEnabled ? 'Desativar sons' : 'Ativar sons';
+  soundToggle.onclick = toggleSound;
+  
+  return soundToggle;
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  const toggle = document.querySelector('.sound-toggle');
+  if (toggle) {
+    toggle.innerHTML = soundEnabled ? '🔊' : '🔇';
+    toggle.title = soundEnabled ? 'Desativar sons' : 'Ativar sons';
+  }
+  
+  // Tocar um som de teste quando ativar
+  if (soundEnabled) {
+    audioSystem.playClickSound();
+  }
+}
+
 function vibrateDevice(duration = 50) {
   if ('vibrate' in navigator) {
     navigator.vibrate(duration);
   }
+}
+
+function playBonusSound(isSpecial = false) {
+  audioSystem.playBonusSound(isSpecial);
 }
 
 function getRandomBonus() {
@@ -117,6 +507,7 @@ function getRandomBonus() {
       const bonusAmount = Math.floor(Math.random() * 30) + 20;
       showBonusMessage(`BÔNUS ESPECIAL! +${bonusAmount}`);
       vibrateDevice(200);
+      playBonusSound(true);
       return bonusAmount;
     }
   }
@@ -125,6 +516,7 @@ function getRandomBonus() {
     const bonusAmount = Math.floor(Math.random() * 10) + 5;
     showBonusMessage(`BÔNUS! +${bonusAmount}`);
     vibrateDevice(100);
+    playBonusSound();
     return bonusAmount;
   }
   
@@ -145,6 +537,10 @@ function showBonusMessage(message) {
     bonusMsg.classList.remove('show');
     setTimeout(() => bonusMsg.remove(), 500);
   }, 2000);
+}
+
+function playCoinSound(points) {
+  audioSystem.playCoinSound(points);
 }
 
 function updateCoinCounter(points) {
@@ -182,14 +578,7 @@ function updateCoinCounter(points) {
     coinPopup.remove();
   }, 1000);
   
-  playCoinSound();
-}
-
-function playCoinSound() {
-  const audio = new Audio();
-  audio.volume = 0.3;
-  audio.src = 'https://assets.mixkit.co/sfx/preview/mixkit-coin-win-notification-1992.mp3';
-  audio.play().catch(e => console.log('Som não pôde ser reproduzido: autoplay bloqueado pelo navegador'));
+  playCoinSound(points);
 }
 
 function createCoinRain() {
@@ -213,12 +602,21 @@ function createCoinRain() {
   }
 }
 
+function playClickSound() {
+  audioSystem.playClickSound();
+}
+
 function renderQuiz() {
   quizContent.innerHTML = '';
   
   if (!document.querySelector('.coin-counter')) {
     const quizContainer = document.querySelector('.quiz-container');
     quizContainer.insertBefore(createCoinCounter(), quizContainer.firstChild);
+    
+    // Adicionar botão de som
+    if (!document.querySelector('.sound-toggle')) {
+      quizContainer.insertBefore(createSoundToggle(), quizContainer.firstChild);
+    }
   }
 
   if (current < quizData.length) {
@@ -228,6 +626,7 @@ function renderQuiz() {
       const provaBtn = document.getElementById('prova-btn');
       if (provaBtn) {
         provaBtn.onclick = () => {
+          playClickSound();
           const pointsEarned = q.points[0];
           const bonusPoints = getRandomBonus();
           totalPoints += pointsEarned + bonusPoints;
@@ -244,6 +643,7 @@ function renderQuiz() {
       input.focus();
       input.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' && input.value.trim()) {
+          playClickSound();
           userName = input.value.trim();
           const pointsEarned = q.points[0];
           const bonusPoints = getRandomBonus();
@@ -270,6 +670,7 @@ function renderQuiz() {
       btn.className = 'answer-btn';
       btn.innerText = ans;
       btn.onclick = () => {
+        playClickSound();
         answers[current] = idx;
         const pointsEarned = q.points[idx];
         const bonusPoints = getRandomBonus();
@@ -321,6 +722,11 @@ function showResult() {
     updateCoinCounter(finalBonus);
     document.querySelector('.result-container').classList.add('show');
     createCoinRain();
+    
+    // Som especial para o resultado final
+    if (soundEnabled) {
+      audioSystem.playFinalSound();
+    }
     
     if ('vibrate' in navigator) {
       navigator.vibrate([100, 50, 100, 50, 200]);
