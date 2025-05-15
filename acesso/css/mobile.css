@@ -209,4 +209,60 @@
         height: 70px;
         font-size: 0.8rem;
     }
+}
+
+/* Testimonials Section - Mobile */
+@media (max-width: 767px) {
+    .testimonial-card {
+        flex-direction: column;
+    }
+    
+    .testimonial-image {
+        width: 100%;
+        height: 180px;
+    }
+    
+    .testimonial-content {
+        width: 100%;
+        padding: 20px;
+    }
+    
+    .testimonial-text {
+        font-size: 0.95rem;
+    }
+    
+    .testimonial-author h4 {
+        font-size: 1rem;
+    }
+    
+    .testimonial-result {
+        font-size: 0.85rem;
+    }
+    
+    .testimonial-dots {
+        margin: 0 10px;
+    }
+    
+    .dot {
+        width: 8px;
+        height: 8px;
+        margin: 0 3px;
+    }
+}
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 480px) {
+    .testimonial-image {
+        height: 150px;
+    }
+    
+    .testimonial-nav {
+        margin-top: 15px;
+    }
+    
+    .prev-btn,
+    .next-btn {
+        width: 35px;
+        height: 35px;
+    }
 } 
