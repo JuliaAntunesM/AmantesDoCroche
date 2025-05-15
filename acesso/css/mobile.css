@@ -147,6 +147,21 @@
     .social-icons {
         justify-content: center;
     }
+
+    /* Videoaulas Section - Mobile */
+    .video-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .video-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .videoaulas {
+        padding: 50px 0;
+    }
 }
 
 /* Estilos para dispositivos pequenos (smartphones) */
