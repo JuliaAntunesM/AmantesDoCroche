@@ -620,18 +620,24 @@ nav {
 }
 
 .testimonial-card {
-  display: none;
+  display: none; /* Esconde todos os cards por padrão */
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   margin: 20px 0;
-  display: flex;
   flex-direction: column;
+  opacity: 0; /* Começa invisível para a animação */
+  position: absolute; /* Posicionamento absoluto para sobreposição */
+  left: 0;
+  right: 0;
+  transition: opacity 0.5s ease-in-out; /* Transição suave */
 }
 
 .testimonial-card.active {
   display: flex;
+  position: relative; /* Volta para o fluxo normal quando ativo */
+  opacity: 1; /* Totalmente visível quando ativo */
   animation: fadeIn 0.5s ease-in-out;
 }
 
@@ -716,6 +722,22 @@ nav {
   justify-content: center;
   align-items: center;
   margin-top: 30px;
+}
+
+.testimonial-counter {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--primary-color);
+  margin: 0 15px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 5px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.testimonial-counter #current-slide {
+  font-weight: 700;
+  color: var(--primary-color);
 }
 
 .prev-btn,
