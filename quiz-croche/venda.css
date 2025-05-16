@@ -2959,3 +2959,60 @@ blockquote span {
     padding: 15px 30px;
   }
 }
+
+.final-destaque:after {
+  animation: pulse-glow 3s infinite;
+}
+
+/* Estilos para as frases de destaque */
+.frase-destaque {
+  background: linear-gradient(135deg, #fff8fa 0%, #fff2e8 100%);
+  border-left: 4px solid #f7b35a;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(247, 179, 90, 0.15);
+  margin: 24px 0;
+  padding: 18px 20px;
+  position: relative;
+  transform: translateY(0);
+  transition: all 0.4s ease;
+}
+
+.frase-destaque:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(247, 179, 90, 0.25);
+  border-left-width: 8px;
+}
+
+.frase-destaque .destaque-icon {
+  display: block;
+  font-size: 32px;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 2px 5px rgba(247, 179, 90, 0.3));
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.frase-destaque p {
+  color: #6d4c1b;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.5;
+  text-align: center;
+  font-style: italic;
+}
+
+@media (max-width: 767px) {
+  .frase-destaque {
+    margin: 20px 0;
+    padding: 16px;
+  }
+  
+  .frase-destaque .destaque-icon {
+    font-size: 26px;
+    margin-bottom: 10px;
+  }
+  
+  .frase-destaque p {
+    font-size: 1.1rem;
+  }
+}

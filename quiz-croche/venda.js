@@ -3,6 +3,51 @@ document.addEventListener('DOMContentLoaded', function() {
   const depoimentos = document.querySelectorAll('.depoimento-destaque');
   const indicadores = document.querySelectorAll('.depoimento-indicador');
   
+  // Animação das frases de destaque
+  const frasesDestaque = document.querySelectorAll('.frase-destaque');
+  
+  // Função para verificar se um elemento está visível na viewport
+  function isElementInViewport(el) {
+    const rect = el.getBoundingClientRect();
+    return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+  }
+  
+  // Adiciona classe para animar quando o elemento está visível
+  function handleScrollAnimation() {
+    frasesDestaque.forEach(frase => {
+      if (isElementInViewport(frase)) {
+        frase.classList.add('frase-visivel');
+      }
+    });
+  }
+  
+  // Verifica ao carregar e ao rolar a página
+  handleScrollAnimation();
+  window.addEventListener('scroll', handleScrollAnimation);
+  
+  // Rotação das cores de fundo das frases
+  let colorIndex = 0;
+  const colors = [
+    'linear-gradient(135deg, #fff8fa 0%, #fff2e8 100%)',
+    'linear-gradient(135deg, #f8fcff 0%, #eaf6ff 100%)',
+    'linear-gradient(135deg, #f9fff8 0%, #eaffd7 100%)',
+    'linear-gradient(135deg, #fff8ff 0%, #f9eaff 100%)'
+  ];
+  
+  setInterval(() => {
+    colorIndex = (colorIndex + 1) % colors.length;
+    frasesDestaque.forEach((frase, i) => {
+      setTimeout(() => {
+        frase.style.background = colors[(colorIndex + i) % colors.length];
+      }, i * 200);
+    });
+  }, 5000);
+  
   if (depoimentos.length > 0 && indicadores.length > 0) {
     // Define o primeiro depoimento como ativo inicialmente
     depoimentos[0].classList.add('active');
