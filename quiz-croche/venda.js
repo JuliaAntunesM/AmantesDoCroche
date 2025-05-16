@@ -6,6 +6,50 @@ document.addEventListener('DOMContentLoaded', function() {
   // Animação das frases de destaque
   const frasesDestaque = document.querySelectorAll('.frase-destaque');
   
+  // Efeito especial ao carregar a página
+  setTimeout(() => {
+    frasesDestaque.forEach((frase, index) => {
+      setTimeout(() => {
+        frase.classList.add('frase-visivel');
+        
+        // Adicionar classe especial para destacar a frase ao carregar
+        frase.classList.add('frase-destaque-inicial');
+        
+        // Remover classe após o efeito inicial
+        setTimeout(() => {
+          frase.classList.remove('frase-destaque-inicial');
+        }, 1500);
+        
+      }, index * 300); // Efeito cascata, uma frase após a outra
+    });
+  }, 1000);
+  
+  // Adicionar elementos decorativos para cada frase
+  frasesDestaque.forEach((frase, index) => {
+    // Criar elementos decorativos
+    const decorElement = document.createElement('div');
+    decorElement.className = 'frase-decor';
+    
+    // Criar elementos de linha decorativa
+    const linhaDecor = document.createElement('div');
+    linhaDecor.className = 'frase-linha';
+    
+    // Adicionar uma âncora visual diferente para cada frase
+    const iconesDecor = ['✨', '🧶', '💖', '💎', '🌟'];
+    const iconeElement = document.createElement('span');
+    iconeElement.className = 'frase-icone-mini';
+    iconeElement.textContent = iconesDecor[index % iconesDecor.length];
+    
+    // Adicionar os elementos ao documento
+    decorElement.appendChild(iconeElement);
+    frase.appendChild(decorElement);
+    frase.appendChild(linhaDecor);
+    
+    // Adicionar efeito de cor de fundo personalizada
+    const corFundo = getComputedStyle(frase).background;
+    frase.setAttribute('data-bg-original', corFundo);
+  });
+  
   // Função para verificar se um elemento está visível na viewport
   function isElementInViewport(el) {
     const rect = el.getBoundingClientRect();
@@ -22,6 +66,11 @@ document.addEventListener('DOMContentLoaded', function() {
     frasesDestaque.forEach(frase => {
       if (isElementInViewport(frase)) {
         frase.classList.add('frase-visivel');
+        
+        // Adicionar efeito de brilho quando a frase ficar visível
+        setTimeout(() => {
+          frase.querySelector('.frase-decor').classList.add('decor-ativo');
+        }, 500);
       }
     });
   }
@@ -44,9 +93,34 @@ document.addEventListener('DOMContentLoaded', function() {
     frasesDestaque.forEach((frase, i) => {
       setTimeout(() => {
         frase.style.background = colors[(colorIndex + i) % colors.length];
-      }, i * 200);
+      }, i * 300);
     });
-  }, 5000);
+  }, 6000);
+  
+  // Adicionar interatividade ao passar o mouse pelas frases
+  frasesDestaque.forEach(frase => {
+    frase.addEventListener('mouseenter', function() {
+      // Efeito de destaque ao passar o mouse
+      this.classList.add('frase-hover');
+      
+      // Destacar ícone
+      const icon = this.querySelector('.destaque-icon');
+      if (icon) {
+        icon.classList.add('icon-hover');
+      }
+    });
+    
+    frase.addEventListener('mouseleave', function() {
+      // Remover efeito ao tirar o mouse
+      this.classList.remove('frase-hover');
+      
+      // Remover destaque do ícone
+      const icon = this.querySelector('.destaque-icon');
+      if (icon) {
+        icon.classList.remove('icon-hover');
+      }
+    });
+  });
   
   if (depoimentos.length > 0 && indicadores.length > 0) {
     // Define o primeiro depoimento como ativo inicialmente

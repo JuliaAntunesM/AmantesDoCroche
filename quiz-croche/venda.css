@@ -2971,48 +2971,346 @@ blockquote span {
   border-radius: 12px;
   box-shadow: 0 8px 25px rgba(247, 179, 90, 0.15);
   margin: 24px 0;
-  padding: 18px 20px;
+  padding: 24px 25px;
   position: relative;
+  transition: all 0.5s ease;
+  opacity: 1;
   transform: translateY(0);
-  transition: all 0.4s ease;
+  animation: fraseEntrada 1.2s ease-out;
+  overflow: hidden;
+}
+
+.frase-destaque::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(30deg);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.frase-destaque:hover::before {
+  opacity: 1;
+  animation: shine 2s infinite;
+}
+
+.frase-destaque::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, rgba(247, 179, 90, 0.3) 0%, rgba(247, 179, 90, 0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes shine {
+  0% { transform: rotate(30deg) translateX(-100%); }
+  100% { transform: rotate(30deg) translateX(100%); }
+}
+
+@keyframes fraseEntrada {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.frase-destaque.frase-visivel {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .frase-destaque:hover {
   transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(247, 179, 90, 0.25);
+  box-shadow: 0 15px 40px rgba(247, 179, 90, 0.3);
   border-left-width: 8px;
 }
 
 .frase-destaque .destaque-icon {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 15px auto;
   font-size: 32px;
-  margin-bottom: 12px;
-  filter: drop-shadow(0 2px 5px rgba(247, 179, 90, 0.3));
+  background: linear-gradient(135deg, #ffd9a0 0%, #f7b35a 100%);
+  color: white;
+  border-radius: 50%;
+  box-shadow: 0 8px 20px rgba(247, 179, 90, 0.3);
+  transition: all 0.4s ease;
   animation: pulse 2s infinite ease-in-out;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.frase-destaque:hover .destaque-icon {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 10px 25px rgba(247, 179, 90, 0.4);
 }
 
 .frase-destaque p {
   color: #6d4c1b;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 600;
   margin: 0;
   line-height: 1.5;
   text-align: center;
   font-style: italic;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
+}
+
+.frase-destaque p::before,
+.frase-destaque p::after {
+  content: '"';
+  color: #f7b35a;
+  font-size: 1.8em;
+  font-style: normal;
+  line-height: 0;
+  opacity: 0.6;
+  position: relative;
+}
+
+.frase-destaque p::before {
+  top: 10px;
+  left: -5px;
+}
+
+.frase-destaque p::after {
+  top: 10px;
+  right: -5px;
 }
 
 @media (max-width: 767px) {
   .frase-destaque {
     margin: 20px 0;
-    padding: 16px;
+    padding: 20px;
   }
   
   .frase-destaque .destaque-icon {
+    width: 50px;
+    height: 50px;
     font-size: 26px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
   
   .frase-destaque p {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
   }
+  
+  .frase-decor {
+    top: -10px;
+    right: -10px;
+  }
+  
+  .frase-icone-mini {
+    font-size: 16px;
+  }
+}
+
+/* Partículas decorativas */
+.frase-destaque::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(255, 217, 160, 0.15) 0, rgba(255, 217, 160, 0) 20px),
+    radial-gradient(circle at 75% 20%, rgba(255, 217, 160, 0.15) 0, rgba(255, 217, 160, 0) 15px),
+    radial-gradient(circle at 40% 80%, rgba(255, 217, 160, 0.15) 0, rgba(255, 217, 160, 0) 25px),
+    radial-gradient(circle at 80% 70%, rgba(255, 217, 160, 0.15) 0, rgba(255, 217, 160, 0) 20px);
+  pointer-events: none;
+  border-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.frase-destaque.frase-visivel::after {
+  opacity: 1;
+}
+
+.frase-destaque:hover::after {
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(255, 217, 160, 0.25) 0, rgba(255, 217, 160, 0) 30px),
+    radial-gradient(circle at 75% 20%, rgba(255, 217, 160, 0.25) 0, rgba(255, 217, 160, 0) 25px),
+    radial-gradient(circle at 40% 80%, rgba(255, 217, 160, 0.25) 0, rgba(255, 217, 160, 0) 35px),
+    radial-gradient(circle at 80% 70%, rgba(255, 217, 160, 0.25) 0, rgba(255, 217, 160, 0) 30px);
+}
+
+/* Elementos decorativos para frases destacadas */
+.frase-decor {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  width: 30px;
+  height: 30px;
+  opacity: 0;
+  transform: scale(0.5) rotate(-20deg);
+  transition: all 0.6s ease;
+  z-index: 3;
+}
+
+.frase-decor.decor-ativo {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.frase-icone-mini {
+  position: absolute;
+  font-size: 20px;
+  animation: flutuarIcone 3s infinite ease-in-out;
+  filter: drop-shadow(0 3px 5px rgba(247, 179, 90, 0.4));
+}
+
+@keyframes flutuarIcone {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(10deg); }
+}
+
+.frase-linha {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  background: linear-gradient(90deg, #f7b35a, transparent);
+  transition: width 1.2s ease;
+  border-radius: 3px;
+}
+
+.frase-visivel .frase-linha {
+  width: 100%;
+}
+
+.frase-hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(247, 179, 90, 0.35);
+  border-left-width: 10px;
+}
+
+.icon-hover {
+  transform: scale(1.2) rotate(10deg);
+  box-shadow: 0 12px 30px rgba(247, 179, 90, 0.5);
+}
+
+/* Efeitos melhorados de pulse para ícones */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); filter: brightness(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Efeito de brilho ao passar o mouse */
+.frase-destaque:hover p {
+  transform: scale(1.03);
+  text-shadow: 0 2px 4px rgba(247, 179, 90, 0.2);
+  transition: all 0.3s ease;
+}
+
+/* Partículas decorativas adicionais */
+.frase-destaque::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(255, 217, 160, 0.15) 0, rgba(255, 217, 160, 0) 20px),
+    radial-gradient(circle at 75% 20%, rgba(255, 217, 160, 0.15) 0, rgba(255, 217, 160, 0) 15px),
+    radial-gradient(circle at 40% 80%, rgba(255, 217, 160, 0.15) 0, rgba(255, 217, 160, 0) 25px),
+    radial-gradient(circle at 80% 70%, rgba(255, 217, 160, 0.15) 0, rgba(255, 217, 160, 0) 20px);
+  pointer-events: none;
+  border-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.frase-destaque.frase-visivel::after {
+  opacity: 1;
+}
+
+.frase-destaque:hover::after {
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(255, 217, 160, 0.25) 0, rgba(255, 217, 160, 0) 30px),
+    radial-gradient(circle at 75% 20%, rgba(255, 217, 160, 0.25) 0, rgba(255, 217, 160, 0) 25px),
+    radial-gradient(circle at 40% 80%, rgba(255, 217, 160, 0.25) 0, rgba(255, 217, 160, 0) 35px),
+    radial-gradient(circle at 80% 70%, rgba(255, 217, 160, 0.25) 0, rgba(255, 217, 160, 0) 30px);
+}
+
+@media (max-width: 767px) {
+  .frase-destaque {
+    margin: 20px 0;
+    padding: 20px;
+  }
+  
+  .frase-destaque .destaque-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 26px;
+    margin-bottom: 12px;
+  }
+  
+  .frase-destaque p {
+    font-size: 1.15rem;
+  }
+  
+  .frase-decor {
+    top: -10px;
+    right: -10px;
+  }
+  
+  .frase-icone-mini {
+    font-size: 16px;
+  }
+}
+
+/* Efeito de destaque inicial */
+.frase-destaque-inicial {
+  animation: destaque-inicial 1.5s ease-in-out;
+  box-shadow: 0 0 30px rgba(247, 179, 90, 0.5);
+  border-left-width: 10px !important;
+}
+
+@keyframes destaque-inicial {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(247, 179, 90, 0.6); }
+  100% { transform: scale(1); }
+}
+
+.frase-destaque-inicial .destaque-icon {
+  animation: icon-pulse-destaque 1.5s ease-in-out;
+}
+
+@keyframes icon-pulse-destaque {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2) rotate(10deg); box-shadow: 0 12px 30px rgba(247, 179, 90, 0.6); }
+  100% { transform: scale(1); }
+}
+
+.frase-destaque-inicial p {
+  animation: texto-destaque 1.5s ease-in-out;
+}
+
+@keyframes texto-destaque {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); text-shadow: 0 2px 8px rgba(247, 179, 90, 0.4); }
+  100% { transform: scale(1); }
 }
