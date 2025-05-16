@@ -954,6 +954,18 @@ blockquote span {
   border: 2px solid rgba(255, 255, 255, 0.3);
   position: relative;
   overflow: hidden;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.faixa-urgencia:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 15px 40px rgba(212, 132, 28, 0.4);
+}
+
+.faixa-urgencia:active {
+  transform: translateY(-2px) scale(0.98);
 }
 
 .faixa-urgencia:before {
